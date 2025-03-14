@@ -1,5 +1,8 @@
 package com.example.babyfon
 
+import android.content.ContentResolver
+import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,8 +26,14 @@ import com.example.babyfon.ui.theme.BabyFonTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.platform.LocalContext
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
 
 class MainActivity : ComponentActivity() {
+
+    private var isPlaying = false;
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -52,9 +61,19 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     }
 }
 
+
+
+
 @Preview(showBackground = true)
 @Composable
 fun FilledButtonExample() {
+    val player = ExoPlayer.Builder(LocalContext.current).build()
+    val uri = Uri.Builder().scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+        .path(R.raw.sample.toString())
+        .build()
+
+    val mediaItem = MediaItem.fromUri(uri)
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -66,11 +85,30 @@ fun FilledButtonExample() {
         Text("Play the audio")
         Spacer(modifier = Modifier.weight(1F))
         //Text("Match the slider as close as you can to the number:")
-
+        var label = "Riproduci"
         Button(onClick = {
+
             /* TODO */
+            //var mediaPlayer = MediaPlayer.create(context, R.raw.sample)
+            //mediaPlayer.start() // no need to call prepare(); create() does that for you
+            if (!player.isPlaying) {
+                // Set the media item to be played.
+                player.setMediaItem(mediaItem)
+// Prepare the player.
+                player.prepare()
+// Start the playback.
+                player.play()
+                label = "Pausa"
+            }
+
+            if (player.isPlaying) {
+                player.stop()
+                label = "Riproduci"
+            }
+
+
         }) {
-            Text("TEST IT")
+            Text(label)
         }
         Spacer(modifier = Modifier.weight(1F))
     }

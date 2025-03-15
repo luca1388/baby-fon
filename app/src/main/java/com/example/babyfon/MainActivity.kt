@@ -26,6 +26,8 @@ import com.example.babyfon.ui.theme.BabyFonTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
@@ -67,6 +69,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun FilledButtonExample() {
+    val (value, setValue) = remember { mutableStateOf("Riproduci") }
     val player = ExoPlayer.Builder(LocalContext.current).build()
     val uri = Uri.Builder().scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
         .path(R.raw.sample.toString())
@@ -81,34 +84,26 @@ fun FilledButtonExample() {
             .padding(all = 16.dp)
     ) {
         Text(text = "Baby Fon", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.padding(bottom = 16.dp))
-
         Text("Play the audio")
         Spacer(modifier = Modifier.weight(1F))
-        //Text("Match the slider as close as you can to the number:")
-        var label = "Riproduci"
-        Button(onClick = {
 
-            /* TODO */
-            //var mediaPlayer = MediaPlayer.create(context, R.raw.sample)
-            //mediaPlayer.start() // no need to call prepare(); create() does that for you
+        //var label = "Riproduci"
+        Button(onClick = {
             if (!player.isPlaying) {
                 // Set the media item to be played.
                 player.setMediaItem(mediaItem)
-// Prepare the player.
+                // Prepare the player.
                 player.prepare()
-// Start the playback.
+                // Start the playback.
                 player.play()
-                label = "Pausa"
+                setValue("Pausa")
             }
-
             if (player.isPlaying) {
                 player.stop()
-                label = "Riproduci"
+                setValue("Riproduci")
             }
-
-
         }) {
-            Text(label)
+            Text(value)
         }
         Spacer(modifier = Modifier.weight(1F))
     }
